@@ -1,0 +1,30 @@
+{
+  "name": "wilcloud",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc && vite build",
+    "fbuild": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@vicons/ionicons5": "^0.12.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "axios": "^1.6.8",
+    "naive-ui": "^2.38.1",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "sass": "^1.75.0",
+    "typescript": "^5.2.2",
+    "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.2.0",
+    "vue-i18n": "^9.12.0",
+    "vue-router": "^4.3.0",
+    "vue-tsc": "^2.0.6"
+  }
+}
