@@ -18,14 +18,23 @@ const path = computed(() => {
   while (_value.substr(-1) === '/')
     _value = _value.substr(0, _value.length - 1);
   while (_value.substr(0, 1) === '/') _value = _value.substr(1);
+  if (_value.length === 0) return [] as string[];
   return _value.split('/');
 });
 
-const folder = ref({ id: 0, files: [] });
+const folder = ref({ id: 0 }),
+  children = ref([]);
 
 const listFile = () => {
-  Axios.get(`/file/folder/list/?path=/${path.value.join('/')}`).then(res => {
+  Axios.get(`/file/folder/?path=/${path.value.join('/')}`).then(res => {
     if (res.data) folder.value = res.data;
+  });
+  Axios.get('/file/folder/list/', {
+    params: { path: `/${path.value.join('/')}` },
+  }).then(res => {
+    if (res.data) {
+      children.value = res.data.results;
+    }
   });
 };
 
@@ -43,12 +52,28 @@ const columns: DataTableColumns = [
   {
     title: 'Name',
     key: 'name',
+    render: (row: any) => {
+      return row.type === 'file'
+        ? row.name
+        : h(
+            NButton,
+            {
+              text: true,
+              onClick: () => {
+                let _path = path.value.join('/');
+                if (_path) _path += '/';
+                router.push(`/root/${_path}${row.name}`);
+              },
+            },
+            () => `${row.name}/`
+          );
+    },
   },
   {
     title: 'Size',
     key: 'size',
     render: (row: any) => {
-      return formatSize(row.size);
+      return row.type === 'file' ? formatSize(row.size) : '-';
     },
   },
   {
@@ -164,7 +189,8 @@ const createFolderName = ref(''),
 
   <n-data-table
     :columns="columns"
-    :data="folder.files"
+    :data="children"
+    :row-key="item => `${item.type}-${item.id}`"
     :pagination="false"
     :bordered="false"
   />
