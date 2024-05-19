@@ -19,6 +19,7 @@ export default {
     email: '邮箱',
     username_placeholder: '仅支持字母、数字、中划线和下划线',
   },
+  file: { path: { root: '根目录' } },
   form: {
     required: '{key}是必填项',
     max_length: '{key}最多{max}个字符',

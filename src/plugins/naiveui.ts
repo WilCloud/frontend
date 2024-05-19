@@ -11,7 +11,7 @@ interface Naiveui {
   modal: ModalApiInjection;
   notification: NotificationApiInjection;
 }
-const naiveui: Naiveui = {
+export const naiveui: Naiveui = {
   dialog: {} as DialogApiInjection,
   loadingBar: {} as LoadingBarApiInjection,
   message: {} as MessageApiInjection,
