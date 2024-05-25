@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { h, computed, ref, watch, nextTick } from 'vue';
+import { h, computed, ref, watch } from 'vue';
 import { NButton, NTime, NInput } from 'naive-ui';
-import type { DataTableColumns, DropdownOption } from 'naive-ui';
+import type { DataTableColumns } from 'naive-ui';
 import { formatSize, toTimestamp } from '../utils/format';
 import router from '../router';
 import naiveui from '../plugins/naiveui';
@@ -83,24 +83,24 @@ const columns: DataTableColumns = [
       return h(NTime, { timestamp: toTimestamp(row.update_time) });
     },
   },
-  // {
-  //   title: 'Info',
-  //   key: 'action',
-  //   render: (row: any) => {
-  //     return h(
-  //       NButton,
-  //       {
-  //         text: true,
-  //         onClick: () => {
-  //           Axios.get(`/file/${row.id}/`).then(res => {
-  //             console.log(res.data);
-  //           });
-  //         },
-  //       },
-  //       () => '123'
-  //     );
-  //   },
-  // },
+  {
+    title: 'Info',
+    key: 'action',
+    render: (row: any) => {
+      return h(
+        NButton,
+        {
+          text: true,
+          onClick: () => {
+            Axios.get(`/file/${row.id}/`).then(res => {
+              console.log(res.data);
+            });
+          },
+        },
+        () => '123'
+      );
+    },
+  },
 ];
 
 // Upload
@@ -182,63 +182,6 @@ const createFolderName = ref(''),
       },
     });
   };
-
-const showFileDropdown = ref(false),
-  fileDropdownOptions: DropdownOption[] = [
-    {
-      label: '下载',
-      key: 'download',
-    },
-    {
-      label: () => h('span', { style: { color: 'red' } }, '删除'),
-      key: 'delete',
-    },
-  ],
-  dropdownX = ref(0),
-  dropdownY = ref(0),
-  rightClickedFile = ref(null),
-  fileRowProps = (row: any) => {
-    return {
-      onContextmenu(e: MouseEvent) {
-        rightClickedFile.value = row;
-        e.preventDefault();
-        console.log(rightClickedFile.value);
-        nextTick().then(() => {
-          showFileDropdown.value = true;
-          dropdownX.value = e.clientX;
-          dropdownY.value = e.clientY;
-        });
-      },
-    };
-  },
-  handleFileDropdownSelect = (key: string) => {
-    showFileDropdown.value = false;
-    const file = rightClickedFile.value;
-    switch (key) {
-      case 'download':
-        Axios.get(`/file/${file.id}/download/`).then(res => {
-          const url = res.data;
-          window.open(`/api${url}`);
-        });
-        break;
-      case 'delete':
-        naiveui.dialog.warning({
-          title: '删除文件',
-          content: '你确定？',
-          positiveText: '确定',
-          negativeText: '取消',
-          autoFocus: false,
-          closable: false,
-          onPositiveClick: () => {
-            Axios.delete(`/file/${file.id}/`).then(res => {
-              naiveui.message.success('删除成功');
-              listFile();
-            });
-          },
-        });
-        break;
-    }
-  };
 </script>
 
 <template>
@@ -262,25 +205,19 @@ const showFileDropdown = ref(false),
     {{ _('file.create_folder') }}
   </n-button>
 
-  <n-data-table
-    :columns="columns"
-    :data="children"
-    :row-key="item => `${item.type}-${item.id}`"
-    :pagination="false"
-    :bordered="false"
-    :row-props="fileRowProps"
-  />
-
-  <n-dropdown
-    placement="bottom-start"
-    trigger="manual"
-    :x="dropdownX"
-    :y="dropdownY"
-    :options="fileDropdownOptions"
-    :show="showFileDropdown"
-    :on-clickoutside="() => (showFileDropdown = false)"
-    @select="handleFileDropdownSelect"
-  />
+  <n-grid x-gap="12" :cols="4">
+    <n-gi v-for="(item, index) in children" :key="index">
+      <n-card draggable="true" class="file-card" tabindex="-1">
+        <template #cover>
+          <img
+            src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+            draggable="false"
+          />
+        </template>
+        {{ item.name }}
+      </n-card>
+    </n-gi>
+  </n-grid>
 
   <n-drawer
     v-model:show="showUpload"
@@ -311,3 +248,17 @@ const showFileDropdown = ref(false),
     </n-drawer-content>
   </n-drawer>
 </template>
+
+<style lang="scss" scoped>
+.file-card {
+  cursor: pointer;
+}
+
+.file-card:focus {
+  background-color: blue;
+}
+
+.file-card:active {
+  background-color: red;
+}
+</style>

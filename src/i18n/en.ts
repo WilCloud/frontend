@@ -13,9 +13,17 @@ export default {
     login: 'Login',
     register: 'Register',
     logout: 'Logout',
+    profile: 'Profile',
     username: 'Username',
     password: 'Password',
     email: 'Email',
     username_placeholder: 'Letters, numbers, underscores and hyphens only',
+  },
+  file: {
+    path: {
+      root: 'Root',
+    },
+    upload: 'Upload',
+    create_folder: 'Create Folder',
   },
 };
