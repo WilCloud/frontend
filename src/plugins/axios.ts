@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import naiveui from './naiveui';
-import { _ } from '../i18n';
+import { t } from '../i18n';
 
 export const Axios = axios.create({
   baseURL: '/api',
@@ -32,20 +32,20 @@ Axios.interceptors.response.use(
       }
       const params = [];
       for (let i = 1; i < res.message.length; i++) {
-        params.push(_(res.message[i]));
+        params.push(t(res.message[i]));
       }
       if (res.status === 'forbidden') {
-        naiveui.message.error(_(res.message[0], params));
+        naiveui.message.error(t(res.message[0], params));
         return Promise.reject(res);
       }
       if (res.status === 'success') {
-        naiveui.message.success(_(res.message[0], params));
+        naiveui.message.success(t(res.message[0], params));
       }
     }
     return res;
   },
   _err => {
-    naiveui.message.error(_('error.network'));
+    naiveui.message.error(t('error.network'));
   }
 );
 

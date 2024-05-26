@@ -9,5 +9,6 @@ export const formatSize = (size: number) => {
 };
 
 export const toTimestamp = (ISOstring: string) => {
+  console.log(ISOstring);
   return new Date(ISOstring).getTime();
 };

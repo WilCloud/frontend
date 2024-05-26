@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import naiveui from '../plugins/naiveui';
 import { routes } from './routes';
 import { useStore } from '../stores';
-import { _ } from '../i18n';
 import getTitle from '../utils/title';
 
 export const router = createRouter({

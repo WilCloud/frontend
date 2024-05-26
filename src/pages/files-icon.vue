@@ -6,7 +6,7 @@ import { formatSize, toTimestamp } from '../utils/format';
 import router from '../router';
 import naiveui from '../plugins/naiveui';
 import { isMobile } from '../consts';
-import { _ } from '../i18n';
+import { t } from '../i18n';
 import { ArchiveOutline } from '@vicons/ionicons5';
 import type { UploadCustomRequestOptions, UploadFileInfo } from 'naive-ui';
 import Axios from '../plugins/axios';
@@ -187,7 +187,7 @@ const createFolderName = ref(''),
 <template>
   <n-breadcrumb style="margin: 1.5em 0">
     <n-breadcrumb-item @click="toPath(0)">
-      {{ _('file.path.root') }}
+      {{ t('file.path.root') }}
     </n-breadcrumb-item>
     <n-breadcrumb-item
       v-for="(item, index) in path"
@@ -199,10 +199,10 @@ const createFolderName = ref(''),
   </n-breadcrumb>
 
   <n-button type="primary" @click="showUpload = true">
-    {{ _('file.upload') }}
+    {{ t('file.upload') }}
   </n-button>
   <n-button type="primary" @click="createFolder">
-    {{ _('file.create_folder') }}
+    {{ t('file.create_folder') }}
   </n-button>
 
   <n-grid x-gap="12" :cols="4">

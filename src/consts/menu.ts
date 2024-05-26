@@ -1,9 +1,18 @@
-import { computed } from 'vue';
-import { _ } from '../i18n';
+import { computed, h } from 'vue';
+import { NIcon } from 'naive-ui';
+import { t } from '../i18n';
+import {
+  Home,
+  VolumeFileStorage,
+  UserProfileAlt,
+  Logout,
+  Login,
+} from '@vicons/carbon';
 
 export const menu = computed(() => [
   {
-    label: _('home'),
+    label: t('home'),
+    icon: () => h(NIcon, { component: Home }),
     key: 'home',
     action: 'route',
   },
@@ -11,7 +20,8 @@ export const menu = computed(() => [
     type: 'divider',
   },
   {
-    label: _('files'),
+    label: t('files'),
+    icon: () => h(NIcon, { component: VolumeFileStorage }),
     key: 'files',
     action: 'route',
   },
@@ -19,12 +29,14 @@ export const menu = computed(() => [
     type: 'divider',
   },
   {
-    label: _('user.profile'),
+    label: t('user.profile'),
+    icon: () => h(NIcon, { component: UserProfileAlt }),
     key: 'user-profile',
     action: 'route',
   },
   {
-    label: _('user.logout'),
+    label: t('user.logout'),
+    icon: () => h(NIcon, { component: Logout }),
     key: 'logout',
     action: 'logout',
   },
@@ -32,7 +44,8 @@ export const menu = computed(() => [
 
 export const menuLoggedOut = computed(() => [
   {
-    label: `${_('user.login')}/${_('user.register')}`,
+    label: `${t('user.login')}/${t('user.register')}`,
+    icon: () => h(NIcon, { component: Login }),
     key: 'user-login',
     action: 'route',
   },

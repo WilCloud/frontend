@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { zhCN, enUS, dateZhCN, dateEnUS, darkTheme } from 'naive-ui';
+import { darkTheme } from 'naive-ui';
 import { isMobile } from './consts';
+import { naiveuiLocale } from './consts/options';
 import Header from './Header.vue';
 import Layout from './Layout.vue';
 import NaiveApi from './components/NaiveApi.vue';
@@ -18,9 +19,9 @@ i18n.global.locale.value = store.locale;
 
 <template>
   <n-config-provider
-    :locale="store.locale === 'en' ? enUS : zhCN"
-    :date-locale="store.locale === 'en' ? dateEnUS : dateZhCN"
-    :theme="store.theme === 'dark' ? darkTheme : null"
+    :locale="naiveuiLocale[store.locale][0]"
+    :date-locale="naiveuiLocale[store.locale][1]"
+    :theme="store.getTheme === 'dark' ? darkTheme : null"
   >
     <n-global-style />
     <n-dialog-provider>

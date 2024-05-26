@@ -5,13 +5,14 @@ import rules from '../../consts/rules';
 import { ref } from 'vue';
 import { useStore } from '../../stores';
 import router from '../../router';
-import { _ } from '../../i18n';
+import { t } from '../../i18n';
 
 const store = useStore();
 
 const loading = ref(false);
 
 const next = (res: any) => {
+  console.log(res);
   store.user = res.data;
   if (router.currentRoute.value.query.next) {
     router.push(router.currentRoute.value.query.next as string);
@@ -70,17 +71,17 @@ const registerForm = ref(),
         size="large"
         justify-content="space-evenly"
       >
-        <n-tab-pane name="login" :tab="_('user.login')">
+        <n-tab-pane name="login" :tab="t('user.login')">
           <n-form
             style="padding: 1rem; margin-top: 0.5rem"
             ref="loginForm"
             :rules="loginRules"
             :model="loginModel"
           >
-            <n-form-item-row :label="_('user.username')" path="username">
+            <n-form-item-row :label="t('user.username')" path="username">
               <n-input v-model:value="loginModel.username" />
             </n-form-item-row>
-            <n-form-item-row :label="_('user.password')" path="password">
+            <n-form-item-row :label="t('user.password')" path="password">
               <n-input
                 type="password"
                 show-password-on="mousedown"
@@ -89,26 +90,26 @@ const registerForm = ref(),
             </n-form-item-row>
             <n-form-item-row>
               <n-button type="primary" block secondary strong @click="login">
-                {{ _('user.login') }}
+                {{ t('user.login') }}
               </n-button>
             </n-form-item-row>
           </n-form>
         </n-tab-pane>
 
-        <n-tab-pane name="register" :tab="_('user.register')">
+        <n-tab-pane name="register" :tab="t('user.register')">
           <n-form
             style="padding: 1rem; margin-top: 0.5rem"
             ref="registerForm"
             :rules="registerRules"
             :model="registerModel"
           >
-            <n-form-item-row :label="_('user.email')" path="email">
+            <n-form-item-row :label="t('user.email')" path="email">
               <n-input v-model:value="registerModel.email" />
             </n-form-item-row>
-            <n-form-item-row :label="_('user.username')" path="username">
+            <n-form-item-row :label="t('user.username')" path="username">
               <n-input v-model:value="registerModel.username" />
             </n-form-item-row>
-            <n-form-item-row :label="_('user.password')" path="password">
+            <n-form-item-row :label="t('user.password')" path="password">
               <n-input
                 type="password"
                 show-password-on="mousedown"
@@ -117,7 +118,7 @@ const registerForm = ref(),
             </n-form-item-row>
             <n-form-item-row>
               <n-button type="primary" block secondary strong @click="register">
-                {{ _('user.register') }}
+                {{ t('user.register') }}
               </n-button>
             </n-form-item-row>
           </n-form>

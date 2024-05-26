@@ -11,7 +11,7 @@
   >
     <n-text tag="div" class="ui-logo" :depth="1" @click="router.push('/')">
       <img src="/logo.png" />
-      <span> {{ _('site.name') }} </span>
+      <span> WilCloud </span>
     </n-text>
     <div
       :style="
@@ -46,6 +46,7 @@
           :options="mobileMenuOptions"
           :indent="18"
           @update:value="handleMenuUpdate"
+          :value="null"
         />
       </div>
     </n-popover>
@@ -57,7 +58,10 @@
         @update:value="store.setLocale"
       >
         <n-button size="small" quaternary class="nav-picker">
-          {{ _('locale.lang') }}
+          <template #icon>
+            <n-icon :component="LanguageOutline" />
+          </template>
+          {{ t('locale.lang') }}
         </n-button>
       </n-popselect>
 
@@ -65,43 +69,47 @@
         size="small"
         quaternary
         class="nav-picker"
+        :focusable="false"
         @click="store.switchTheme"
       >
-        {{ store.theme === 'light' ? _('theme.dark') : _('theme.light') }}
+        <template #icon>
+          <n-icon :component="themeOptionsIcon[store.theme]" />
+        </template>
+        {{ t(`theme.${store.theme}`) }}
       </n-button>
     </div>
   </n-layout-header>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { MenuOutline } from '@vicons/ionicons5';
+import { ref, computed, h } from 'vue';
+import { MenuOutline, LanguageOutline } from '@vicons/ionicons5';
 import { isMobile } from './consts';
 import { useStore } from './stores';
 import router from './router';
-import { languageOptions } from './consts/options';
+import { languageOptions, themeOptionsIcon } from './consts/options';
 import handleMenuChange from './utils/handleMenuChange';
-import { NPopselect, NButton } from 'naive-ui';
+import { NPopselect, NButton, NIcon } from 'naive-ui';
+import type { SelectOption } from 'naive-ui';
 import { menu, menuLoggedOut } from './consts/menu';
-import i18n from './i18n';
+import { t } from './i18n';
 
-const _ = i18n.global.t;
 const store = useStore();
 
 const mobilePopoverRef = ref();
 
 const headerMenuOptions = computed(() => [
   //   {
-  //     label: _('home'),
+  //     label: t('home'),
   //     key: 'home',
   //   },
   //   {
-  //     label: _('user.login'),
+  //     label: t('user.login'),
   //     key: 'user-login',
   //   },
 ]);
 
-const mobileMenuOptions = ref([]);
+const mobileMenuOptions = ref<SelectOption[]>([]);
 
 if (menu.value) {
   mobileMenuOptions.value = mobileMenuOptions.value.concat(
@@ -116,12 +124,14 @@ mobileMenuOptions.value = mobileMenuOptions.value.concat([
     type: 'divider',
   },
   {
-    label: () => (store.theme === 'light' ? _('theme.dark') : _('theme.light')),
+    label: () => t(`theme.${store.theme}`),
+    icon: () => h(NIcon, { component: themeOptionsIcon[store.theme] }),
     key: 'changeTheme',
     action: 'changeTheme',
   },
   {
-    label: _('locale.lang'),
+    label: t('locale.lang'),
+    icon: () => h(NIcon, { component: LanguageOutline }),
     key: 'changeLanguage',
     children: languageOptions.map(item => {
       return {

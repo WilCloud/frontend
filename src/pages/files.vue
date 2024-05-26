@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { h, computed, ref, watch, nextTick } from 'vue';
-import { NButton, NTime, NInput } from 'naive-ui';
+import { NButton, NTime, NInput, NIcon } from 'naive-ui';
 import type { DataTableColumns, DropdownOption } from 'naive-ui';
 import { formatSize, toTimestamp } from '../utils/format';
 import router from '../router';
 import naiveui from '../plugins/naiveui';
 import { isMobile } from '../consts';
-import { _ } from '../i18n';
-import { ArchiveOutline } from '@vicons/ionicons5';
+import { t } from '../i18n';
+import { CloudDownload, Edit, Delete, Upload } from '@vicons/carbon';
 import type { UploadCustomRequestOptions, UploadFileInfo } from 'naive-ui';
 import Axios from '../plugins/axios';
 
@@ -23,7 +23,7 @@ const path = computed(() => {
 });
 
 const folder = ref({ id: 0 }),
-  children = ref([]);
+  children = ref<Child[]>([]);
 
 const listFile = () => {
   Axios.get(`/folder/?path=/${path.value.join('/')}`).then(res => {
@@ -42,109 +42,111 @@ listFile();
 watch(() => path.value, listFile);
 
 const columns: DataTableColumns = [
-  {
-    type: 'selection',
-  },
-  // {
-  //   title: 'ID',
-  //   key: 'id',
-  // },
-  {
-    title: 'Name',
-    key: 'name',
-    render: (row: any) => {
-      return row.type === 'file'
-        ? row.name
-        : h(
-            NButton,
-            {
-              text: true,
-              onClick: () => {
-                let _path = path.value.join('/');
-                if (_path) _path += '/';
-                router.push(`/root/${_path}${row.name}`);
+    {
+      type: 'selection',
+    },
+    // {
+    //   title: 'ID',
+    //   key: 'id',
+    // },
+    {
+      title: t('file.name'),
+      key: 'name',
+      render: (row: any) => {
+        return row.type === 'file'
+          ? row.name
+          : h(
+              NButton,
+              {
+                text: true,
+                onClick: () => {
+                  let _path = path.value.join('/');
+                  if (_path) _path += '/';
+                  router.push(`/root/${_path}${row.name}`);
+                },
               },
-            },
-            () => `${row.name}/`
-          );
+              () => `${row.name}/`
+            );
+      },
     },
-  },
-  {
-    title: 'Size',
-    key: 'size',
-    render: (row: any) => {
-      return row.type === 'file' ? formatSize(row.size) : '-';
+    {
+      title: t('file.size'),
+      key: 'size',
+      render: (row: any) => {
+        return row.type === 'file' ? formatSize(row.size) : '-';
+      },
     },
-  },
-  {
-    title: '修改日期',
-    key: 'update_time',
-    render: (row: any) => {
-      return h(NTime, { timestamp: toTimestamp(row.update_time) });
+    {
+      title: t('file.modified'),
+      key: 'update_time',
+      render: (row: any) => {
+        return h(NTime, {
+          time: toTimestamp(row.update_time ?? row.create_time),
+        });
+      },
     },
-  },
-  // {
-  //   title: 'Info',
-  //   key: 'action',
-  //   render: (row: any) => {
-  //     return h(
-  //       NButton,
-  //       {
-  //         text: true,
-  //         onClick: () => {
-  //           Axios.get(`/file/${row.id}/`).then(res => {
-  //             console.log(res.data);
-  //           });
-  //         },
-  //       },
-  //       () => '123'
-  //     );
-  //   },
-  // },
-];
+    // {
+    //   title: 'Info',
+    //   key: 'action',
+    //   render: (row: any) => {
+    //     return h(
+    //       NButton,
+    //       {
+    //         text: true,
+    //         onClick: () => {
+    //           Axios.get(`/file/${row.id}/`).then(res => {
+    //             console.log(res.data);
+    //           });
+    //         },
+    //       },
+    //       () => '123'
+    //     );
+    //   },
+    // },
+  ],
+  rowKey = (item: Child) => `${item.type}-${item.id}`;
 
 // Upload
 
 const showUpload = ref(false);
 
 const uploadRef = ref();
-const uploadMap = ref({});
+const uploadMap = ref<{ [key: string]: string }>({});
 const handleFileUpload = (options: {
-  file: UploadFileInfo;
-  fileList: UploadFileInfo[];
-}) => {
-  console.log(options);
+    file: UploadFileInfo;
+    fileList: UploadFileInfo[];
+  }) => {
+    console.log(options);
 
-  const file = options.file;
-  const fileObj = file.file as File;
-  // Local Storage
-  Axios.post('/upload/init/', {
-    name: fileObj.name,
-    size: fileObj.size,
-    storage_id: 1,
-    parent_id: folder.value.id,
-  }).then(res => {
-    console.log(res);
-    uploadMap.value[file.id] = res.data.upload_url;
-    uploadRef.value.submit(file.id);
-  });
-};
-const doUpload = (options: UploadCustomRequestOptions) => {
-  console.log(options);
-  const file = options.file;
-  const uploadUrl = uploadMap.value[file.id] as string,
-    fileObj = file.file as File;
+    const file = options.file;
+    const fileObj = file.file as File;
+    // Local Storage
+    Axios.post('/upload/init/', {
+      name: fileObj.name,
+      size: fileObj.size,
+      storage_id: 1,
+      parent_id: folder.value.id,
+    }).then(res => {
+      console.log(res);
+      uploadMap.value[file.id] = res.data.upload_url;
+      uploadRef.value.submit(file.id);
+    });
+  },
+  doUpload = (options: UploadCustomRequestOptions) => {
+    const file = options.file;
+    const uploadUrl = uploadMap.value[file.id] as string,
+      fileObj = file.file as File;
 
-  const formData = new FormData();
-  formData.append('file', fileObj);
-  Axios.post(uploadUrl, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }).then(res => {
-    console.log(res);
-  });
-};
+    const formData = new FormData();
+    formData.append('file', fileObj);
+    Axios.post(uploadUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(res => {
+      console.log(res);
+    });
+  };
 
 const toPath = (index: number) => {
   let _path = '';
@@ -155,30 +157,30 @@ const toPath = (index: number) => {
 };
 
 const createFolderName = ref(''),
+  createFolderLoading = ref(false),
   createFolder = () => {
-    const m = naiveui.modal.create({
-      title: '创建文件夹',
-      preset: 'dialog',
+    naiveui.dialog.create({
+      title: t('file.create_folder'),
+      loading: createFolderLoading.value,
+      autoFocus: false,
+      closable: false,
       content: () =>
         h(NInput, {
-          placeholder: '请输入文件夹名称',
           value: createFolderName.value,
           onUpdateValue: (value: string) => {
             createFolderName.value = value;
           },
         }),
-      positiveText: '确定',
-      negativeText: '取消',
+      positiveText: t('operation.confirm'),
+      negativeText: t('operation.cancel'),
       onPositiveClick: () => {
+        createFolderLoading.value = true;
         Axios.post('/folder/', {
           name: createFolderName.value,
           parent_id: folder.value.id,
-        }).then(res => {
-          m.destroy();
+        }).then(_res => {
+          createFolderLoading.value = false;
         });
-      },
-      onNegativeClick: () => {
-        m.destroy();
       },
     });
   };
@@ -186,23 +188,43 @@ const createFolderName = ref(''),
 const showFileDropdown = ref(false),
   fileDropdownOptions: DropdownOption[] = [
     {
-      label: '下载',
+      label: t('operation.download'),
+      icon: () => h(NIcon, { component: CloudDownload }),
       key: 'download',
     },
     {
-      label: () => h('span', { style: { color: 'red' } }, '删除'),
+      label: t('operation.rename'),
+      icon: () => h(NIcon, { component: Edit }),
+      key: 'rename',
+    },
+    {
+      label: () =>
+        h('span', { style: { color: 'red' } }, t('operation.delete')),
+      icon: () => h(NIcon, { component: Delete, color: 'red' }),
+      key: 'delete',
+    },
+  ],
+  folderDropdownOptions: DropdownOption[] = [
+    {
+      label: t('operation.rename'),
+      icon: () => h(NIcon, { component: Edit }),
+      key: 'rename',
+    },
+    {
+      label: () =>
+        h('span', { style: { color: 'red' } }, t('operation.delete')),
+      icon: () => h(NIcon, { component: Delete, color: 'red' }),
       key: 'delete',
     },
   ],
   dropdownX = ref(0),
   dropdownY = ref(0),
-  rightClickedFile = ref(null),
+  rightClickedObj = ref<Child | null>(null),
   fileRowProps = (row: any) => {
     return {
       onContextmenu(e: MouseEvent) {
-        rightClickedFile.value = row;
+        rightClickedObj.value = row;
         e.preventDefault();
-        console.log(rightClickedFile.value);
         nextTick().then(() => {
           showFileDropdown.value = true;
           dropdownX.value = e.clientX;
@@ -211,32 +233,72 @@ const showFileDropdown = ref(false),
       },
     };
   },
-  handleFileDropdownSelect = (key: string) => {
+  handleDropdownSelect = (key: string) => {
     showFileDropdown.value = false;
-    const file = rightClickedFile.value;
+    const obj = rightClickedObj.value;
+    if (obj === null) return;
     switch (key) {
       case 'download':
-        Axios.get(`/file/${file.id}/download/`).then(res => {
+        Axios.get(`/file/${obj.id}/download/`).then(res => {
           const url = res.data;
           window.open(`/api${url}`);
         });
         break;
       case 'delete':
+        const deleteLoading = ref(false);
         naiveui.dialog.warning({
-          title: '删除文件',
-          content: '你确定？',
-          positiveText: '确定',
-          negativeText: '取消',
+          title: t(`operation.delete_${obj.type}`),
+          loading: deleteLoading.value,
+          content: t('confirmation.delete_confirm', [obj.name]),
+          positiveText: t('operation.confirm'),
+          negativeText: t('operation.cancel'),
           autoFocus: false,
           closable: false,
           onPositiveClick: () => {
-            Axios.delete(`/file/${file.id}/`).then(res => {
-              naiveui.message.success('删除成功');
+            deleteLoading.value = true;
+            Axios.delete(`/${obj.type}/${obj.id}/`).then(_res => {
+              deleteLoading.value = false;
+              naiveui.message.success(
+                t('success.success', [t('operation.delete')])
+              );
               listFile();
             });
           },
         });
         break;
+      case 'rename':
+        const renameNewName = ref(obj.name),
+          renameLoading = ref(false);
+        naiveui.dialog.create({
+          title: t('operation.rename'),
+          loading: renameLoading.value,
+          autoFocus: false,
+          closable: false,
+          content: () =>
+            h(NInput, {
+              value: renameNewName.value,
+              onUpdateValue: (value: string) => {
+                renameNewName.value = value;
+              },
+            }),
+          positiveText: t('operation.confirm'),
+          negativeText: t('operation.cancel'),
+          onPositiveClick: () => {
+            renameLoading.value = true;
+            Axios.patch(`/${obj.type}/${obj.id}/`, {
+              name: renameNewName.value,
+            }).then(res => {
+              renameLoading.value = false;
+              // @ts-ignore
+              if (res.status === 'success') {
+                naiveui.message.success(
+                  t('success.success', [t('operation.rename')])
+                );
+              }
+              listFile();
+            });
+          },
+        });
     }
   };
 </script>
@@ -244,7 +306,7 @@ const showFileDropdown = ref(false),
 <template>
   <n-breadcrumb style="margin: 1.5em 0">
     <n-breadcrumb-item @click="toPath(0)">
-      {{ _('file.path.root') }}
+      {{ t('file.path.root') }}
     </n-breadcrumb-item>
     <n-breadcrumb-item
       v-for="(item, index) in path"
@@ -255,31 +317,39 @@ const showFileDropdown = ref(false),
     </n-breadcrumb-item>
   </n-breadcrumb>
 
-  <n-button type="primary" @click="showUpload = true">
-    {{ _('file.upload') }}
-  </n-button>
-  <n-button type="primary" @click="createFolder">
-    {{ _('file.create_folder') }}
-  </n-button>
+  <n-button-group style="margin-left: 0.2em; margin-bottom: 1em">
+    <n-button type="primary" @click="showUpload = true" ghost>
+      {{ t('operation.upload_file') }}
+    </n-button>
+    <n-button type="primary" @click="createFolder" ghost>
+      {{ t('file.create_folder') }}
+    </n-button>
+  </n-button-group>
 
   <n-data-table
     :columns="columns"
     :data="children"
-    :row-key="item => `${item.type}-${item.id}`"
+    :row-key="rowKey"
     :pagination="false"
     :bordered="false"
     :row-props="fileRowProps"
+    style="user-select: none"
   />
 
   <n-dropdown
+    v-if="rightClickedObj !== null"
     placement="bottom-start"
     trigger="manual"
     :x="dropdownX"
     :y="dropdownY"
-    :options="fileDropdownOptions"
+    :options="
+      rightClickedObj.type === 'file'
+        ? fileDropdownOptions
+        : folderDropdownOptions
+    "
     :show="showFileDropdown"
     :on-clickoutside="() => (showFileDropdown = false)"
-    @select="handleFileDropdownSelect"
+    @select="handleDropdownSelect"
   />
 
   <n-drawer
@@ -287,7 +357,7 @@ const showFileDropdown = ref(false),
     width="35vw"
     :placement="isMobile ? 'bottom' : 'right'"
   >
-    <n-drawer-content title="上传文件">
+    <n-drawer-content :title="t('operation.upload_file')">
       <n-upload
         directory-dnd
         :default-upload="false"
@@ -298,14 +368,14 @@ const showFileDropdown = ref(false),
       >
         <n-upload-dragger>
           <div style="margin-bottom: 12px">
-            <n-icon size="48" :depth="3">
-              <ArchiveOutline />
-            </n-icon>
+            <n-icon :component="Upload" size="48" :depth="3" />
           </div>
           <n-text style="font-size: 16px">
-            点击或者拖动文件到该区域来上传
+            {{ t('prompt.drag_to_upload_1') }}
           </n-text>
-          <n-p depth="3" style="margin: 8px 0 0 0"> 上传文件不超过 </n-p>
+          <n-p depth="3" style="margin: 8px 0 0 0">
+            {{ t('prompt.drag_to_upload_2') }}
+          </n-p>
         </n-upload-dragger>
       </n-upload>
     </n-drawer-content>

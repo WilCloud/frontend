@@ -8,3 +8,24 @@
     white-space: initial;
   }
 }
+
+.n-dialog {
+  .n-dialog__title {
+    .n-dialog__icon {
+      display: none;
+    }
+  }
+  .n-dialog__content {
+    .n-input {
+      margin: 0.5em 0;
+    }
+  }
+}
+
+// .n-dialog-show-icon {
+//   .n-dialog__title {
+//     .n-dialog__icon {
+//       display: unset !important;
+//     }
+//   }
+// }

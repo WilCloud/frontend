@@ -1,0 +1,65 @@
+{
+  "home": "Home",
+  "theme": {
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "System"
+  },
+  "locale": {
+    "lang": "Language"
+  },
+  "user": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "username_placeholder": "Letters, numbers, underscores and hyphens only",
+    "user": "User"
+  },
+  "file": {
+    "path": {
+      "root": "Root"
+    },
+    "create_folder": "Create Folder",
+    "name": "Name",
+    "size": "Size",
+    "modified": "Modified"
+  },
+  "error": {
+    "banned": "{0} is banned",
+    "in_use": "{0} is already in use",
+    "network": "Network error",
+    "not_found": "{0} not found",
+    "wrong_password": "Password is wrong"
+  },
+  "form": {
+    "email": "Email",
+    "max_length": "{key} is at most {max} characters",
+    "character_limit1": "{key} can only contain letters, numbers and underscores",
+    "min_length": "{key} is at least 10 characters",
+    "required": "{key} is required"
+  },
+  "success": {
+    "success": "{0} succeeded"
+  },
+  "operation": {
+    "upload_file": "Upload",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "delete_file": "Delete file",
+    "download": "Download",
+    "delete_folder": "Delete folder",
+    "rename": "Rename"
+  },
+  "prompt": {
+    "drag_to_upload_1": "Click or drag file to this area"
+  },
+  "confirmation": {
+    "delete_confirm": "Are you sure you want to delete {0}?"
+  }
+}
