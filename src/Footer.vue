@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { _ } from './i18n';
+// import { t } from './i18n';
 </script>
 
 <template>

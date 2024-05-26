@@ -14,11 +14,6 @@ export const routes = [
     name: 'files',
     component: () => import('../pages/files.vue'),
   },
-  {
-    path: '/icon/:path(.*)?',
-    name: 'files-icon',
-    component: () => import('../pages/files-icon.vue'),
-  },
 ];
 
 export default routes;

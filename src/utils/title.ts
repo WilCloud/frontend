@@ -1,6 +1,7 @@
+import type { RouteRecordName } from 'vue-router';
 import { t } from '../i18n';
 
-export default (name: string) => {
+export default (name?: RouteRecordName | null) => {
   const h1s = document.getElementsByTagName('h1');
   if (name === 'home') {
     document.title = t('site.name');
