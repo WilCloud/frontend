@@ -18,7 +18,17 @@
     "password": "Password",
     "email": "Email",
     "username_placeholder": "Letters, numbers, underscores and hyphens only",
-    "user": "User"
+    "user": "User",
+    "settings": {},
+    "setting": "User Setting",
+    "id": "User ID",
+    "avatar": "Avatar",
+    "date_joined": "Sign Up Date",
+    "security": "Security",
+    "original_password": "Original Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "update_password": "Update Password"
   },
   "file": {
     "path": {
@@ -27,7 +37,8 @@
     "create_folder": "Create Folder",
     "name": "Name",
     "size": "Size",
-    "modified": "Modified"
+    "modified": "Modified",
+    "file": "File"
   },
   "error": {
     "banned": "{0} is banned",
@@ -40,7 +51,7 @@
     "email": "Email",
     "max_length": "{key} is at most {max} characters",
     "character_limit1": "{key} can only contain letters, numbers and underscores",
-    "min_length": "{key} is at least 10 characters",
+    "min_length": "{key} is at least {min} characters",
     "required": "{key} is required"
   },
   "success": {
@@ -54,12 +65,17 @@
     "delete_file": "Delete file",
     "download": "Download",
     "delete_folder": "Delete folder",
-    "rename": "Rename"
+    "rename": "Rename",
+    "save": "Save",
+    "update": "Update"
   },
   "prompt": {
     "drag_to_upload_1": "Click or drag file to this area"
   },
   "confirmation": {
     "delete_confirm": "Are you sure you want to delete {0}?"
+  },
+  "propmt": {
+    "password_not_match": "New password and confirm password is not identical"
   }
 }

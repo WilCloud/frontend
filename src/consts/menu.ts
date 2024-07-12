@@ -5,6 +5,7 @@ import {
   Home,
   VolumeFileStorage,
   UserProfileAlt,
+  Settings,
   Logout,
   Login,
 } from '@vicons/carbon';
@@ -20,7 +21,7 @@ export const menu = computed(() => [
     type: 'divider',
   },
   {
-    label: t('files'),
+    label: t('file.file'),
     icon: () => h(NIcon, { component: VolumeFileStorage }),
     key: 'files',
     action: 'route',
@@ -32,6 +33,12 @@ export const menu = computed(() => [
     label: t('user.profile'),
     icon: () => h(NIcon, { component: UserProfileAlt }),
     key: 'user-profile',
+    action: 'route',
+  },
+  {
+    label: t('user.setting'),
+    icon: () => h(NIcon, { component: Settings }),
+    key: 'user-setting',
     action: 'route',
   },
   {

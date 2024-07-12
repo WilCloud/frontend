@@ -32,15 +32,16 @@ export const rules = {
     return {
       required,
       validator(_rule: FormItemRule, value: string) {
+        console.log(value);
         if (!value) {
           return new Error(t('form.required', { key: t('user.password') }));
         } else if (value.length > 128) {
           return new Error(
-            t('form.max_length', { key: t('user.username'), max: 128 })
+            t('form.max_length', { key: t('user.password'), max: 128 })
           );
         } else if (value.length < 8) {
           return new Error(
-            t('form.min_length', { key: t('user.username'), min: 8 })
+            t('form.min_length', { key: t('user.password'), min: 8 })
           );
         }
         return true;
